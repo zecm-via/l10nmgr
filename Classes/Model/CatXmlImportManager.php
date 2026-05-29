@@ -142,7 +142,9 @@ class CatXmlImportManager
     protected function _isIncorrectXMLFile(): bool
     {
         $error = [];
-        if (!isset($this->headerData['t3_formatVersion']) || $this->headerData['t3_formatVersion'] != L10NMGR_FILEVERSION) {
+        if (!isset($this->headerData['t3_formatVersion'])
+            || !in_array($this->headerData['t3_formatVersion'], [L10NMGR_FILEVERSION, '1.2'])
+        ) {
             $error[] = sprintf(
                 $this->getLanguageService()->getLL('import.manager.error.version.message'),
                 $this->headerData['t3_formatVersion'] ?? '',

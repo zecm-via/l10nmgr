@@ -20,7 +20,6 @@ namespace Localizationteam\L10nmgr\Controller;
 use Localizationteam\L10nmgr\Traits\BackendUserTrait;
 use Localizationteam\L10nmgr\Traits\LanguageServiceTrait;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Used in "BaseScriptClass" from TYPO3 Core
@@ -123,7 +122,7 @@ class BaseModule12
             $this->MCONF = $GLOBALS['MCONF'] ?? [];
         }
         // @extensionScannerIgnoreLine
-        $this->id = (int)GeneralUtility::_GP('id');
+        $this->id = (int) ($GLOBALS['TYPO3_REQUEST']->getQueryParams()['id'] ?? 0);
         $this->menuConfig();
     }
 
@@ -138,7 +137,7 @@ class BaseModule12
     {
         $this->MOD_SETTINGS = BackendUtility::getModuleData(
             $this->MOD_MENU,
-            GeneralUtility::_GP('SET'),
+            $GLOBALS['TYPO3_REQUEST']->getQueryParams()['SET'],
             $this->MCONF['name'],
             $this->modMenu_type,
             $this->modMenu_dontValidateList,

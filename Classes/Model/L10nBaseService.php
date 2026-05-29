@@ -904,7 +904,7 @@ class L10nBaseService implements LoggerAwareInterface
                 )
             )
             ->executeQuery()
-            ->fetch();
+            ->fetchAssociative();
 
         return $row ?: [];
     }

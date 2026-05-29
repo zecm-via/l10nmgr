@@ -553,7 +553,7 @@ class LocalizationModuleController extends BaseModule12
                     $flashMessageData = [
                         'message' => $messagePlaceholder,
                         'title' => $title,
-                        'severity' => $status,
+                        'severity' => $status->value,
                     ];
                     $flashMessage = FlashMessage::createFromArray($flashMessageData);
 
@@ -580,7 +580,7 @@ class LocalizationModuleController extends BaseModule12
                     );
                 }
 
-                $internalFlashMessage = $viewClass->renderInternalMessagesAsFlashMessage((string)$status);
+                $internalFlashMessage = $viewClass->renderInternalMessagesAsFlashMessage((string)$status->value);
                 $viewClass->saveExportInformation();
             }
         }
@@ -830,7 +830,7 @@ class LocalizationModuleController extends BaseModule12
                     }
                 }
 
-                $internalFlashMessage = $viewClass->renderInternalMessagesAsFlashMessage((string)$status);
+                $internalFlashMessage = $viewClass->renderInternalMessagesAsFlashMessage((string)$status->value);
 
                 $viewClass->saveExportInformation();
             }

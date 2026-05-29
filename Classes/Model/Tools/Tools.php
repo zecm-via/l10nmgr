@@ -766,7 +766,7 @@ class Tools
             $configuredFields = array_keys($GLOBALS['TCA'][$table]['columns'] ?? []);
             $tableColumns = $this->connectionPool
                 ->getConnectionForTable($table)
-                ->getSchemaManager()
+                ->createSchemaManager()
                 ->listTableColumns($table);
             $fieldsInDatabase = [];
             foreach ($tableColumns as $column) {

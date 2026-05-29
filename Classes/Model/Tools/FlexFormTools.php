@@ -17,33 +17,15 @@ declare(strict_types=1);
 
 namespace Localizationteam\L10nmgr\Model\Tools;
 
-use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidIdentifierException;
-use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidParentRowException;
-use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidParentRowLoopException;
-use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidParentRowRootException;
-use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidPointerFieldValueException;
+use Exception;
 use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidTcaException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Contains functions for manipulating flex form data
  */
-class FlexFormTools extends \TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools
+readonly class FlexFormTools extends \TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools
 {
-    /**
-     * Contains data structure when traversing flexform
-     *
-     * @var array
-     */
-    public array $traverseFlexFormXMLData_DS = [];
-
-    /**
-     * Contains data array when traversing flexform
-     *
-     * @var array
-     */
-    public array $traverseFlexFormXMLData_Data = [];
-
     /**
      * Handler for Flex Forms
      *
@@ -61,7 +43,6 @@ class FlexFormTools extends \TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools
         if (!is_array($GLOBALS['TCA'][$table]) || !is_array($GLOBALS['TCA'][$table]['columns'][$field])) {
             return 'TCA table/field was not defined.';
         }
-        $this->callBackObj = $callBackObj;
 
         // Get data structure. The methods may throw various exceptions, with some of them being
         // ok in certain scenarios, for instance on new record rows. Those are ok to "eat" here
@@ -70,11 +51,11 @@ class FlexFormTools extends \TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools
         try {
             $dataStructureIdentifier = $this->getDataStructureIdentifier($GLOBALS['TCA'][$table]['columns'][$field], $table, $field, $row);
             $dataStructureArray = $this->parseDataStructureByIdentifier($dataStructureIdentifier);
-        } catch (InvalidParentRowException|InvalidParentRowLoopException|InvalidParentRowRootException|InvalidPointerFieldValueException|InvalidIdentifierException $e) {
+        } catch (Exception) {
         }
 
         // Get flexform XML data
-        $editData = GeneralUtility::xml2array($row[$field]);
+        $editData = GeneralUtility::xml2array($row[$field] ?? '');
 
         if (!is_array($editData)) {
             return 'Parsing error: ' . $editData;
@@ -93,10 +74,14 @@ class FlexFormTools extends \TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools
                 $PA['table'] = $table;
                 $PA['field'] = $field;
                 $PA['uid'] = $row['uid'];
-                $this->traverseFlexFormXMLData_DS = &$sheetData;
-                $this->traverseFlexFormXMLData_Data = &$editData;
                 // Render flexform:
-                $this->traverseFlexFormXMLData_recurse($sheetData['ROOT']['el'], $editData['data'][$sheetKey]['lDEF'] ?? [], $PA, 'data/' . $sheetKey . '/lDEF');
+                $this->traverseFlexFormXMLData_recurse(
+                    $sheetData['ROOT']['el'],
+                    $editData['data'][$sheetKey]['lDEF'] ?? [],
+                    $PA,
+                    $callBackObj,
+                    'data/' . $sheetKey . '/lDEF'
+                );
             } else {
                 return 'Data Structure ERROR: No ROOT element found for sheet "' . $sheetKey . '".';
             }
@@ -112,7 +97,7 @@ class FlexFormTools extends \TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools
      * @param array $PA Additional parameters passed.
      * @param string $path Telling the "path" to the element in the flexform XML
      */
-    public function traverseFlexFormXMLData_recurse($dataStruct, $editData, &$PA, $path = ''): void
+    public function traverseFlexFormXMLData_recurse($dataStruct, $editData, &$PA, $callBackObj, $path = ''): void
     {
         if (is_array($dataStruct)) {
             foreach ($dataStruct as $key => $value) {
@@ -120,14 +105,12 @@ class FlexFormTools extends \TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools
                     // Array (Section) traversal
                     if ($value['section'] ?? false) {
                         if (isset($editData[$key]['el']) && is_array($editData[$key]['el'])) {
-                            if ($this->reNumberIndexesOfSectionData) {
-                                $temp = [];
-                                $c3 = 0;
-                                foreach ($editData[$key]['el'] as $v3) {
-                                    $temp[++$c3] = $v3;
-                                }
-                                $editData[$key]['el'] = $temp;
+                            $temp = [];
+                            $c3 = 0;
+                            foreach ($editData[$key]['el'] as $v3) {
+                                $temp[++$c3] = $v3;
                             }
+                            $editData[$key]['el'] = $temp;
                             foreach ($editData[$key]['el'] as $k3 => $v3) {
                                 if (is_array($v3)) {
                                     $cc = $k3;
@@ -155,17 +138,37 @@ class FlexFormTools extends \TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools
                         $vKey = 'v' . $vKey;
                         // Call back
                         if (!empty($PA['callBackMethod_value']) && isset($editData[$key][$vKey])) {
-                            $this->executeCallBackMethod($PA['callBackMethod_value'], [
+                            $this->executeCallBackMethod(
+                                $PA['callBackMethod_value'],
+                                [
                                     $value,
                                     $editData[$key][$vKey],
                                     $PA,
                                     $path . '/' . $key . '/' . $vKey,
                                     $this,
-                            ]);
+                                ],
+                                $callBackObj
+                            );
                         }
                     }
                 }
             }
         }
+    }
+
+    /**
+     * Execute method on callback object
+     *
+     * @param string $methodName Method name to call
+     * @param array $parameterArray Parameters
+     * @return mixed Result of callback object
+     */
+    protected function executeCallBackMethod(string $methodName, array $parameterArray, $callBackObj): mixed
+    {
+        if (is_object($callBackObj)) {
+            return $callBackObj->$methodName(...$parameterArray);
+        }
+
+        return null;
     }
 }

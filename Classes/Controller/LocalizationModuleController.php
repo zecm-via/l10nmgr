@@ -418,11 +418,11 @@ class LocalizationModuleController extends BaseModule12
         // simple init of translation object:
         /** @var TranslationData $translationData */
         $translationData = GeneralUtility::makeInstance(TranslationData::class);
-        $translationData->setTranslationData((array)GeneralUtility::_POST('translation'));
+        $translationData->setTranslationData((array)$this->getPostVariable('translation'));
         $translationData->setLanguage($this->sysLanguage);
         $translationData->setPreviewLanguage($this->previewLanguage);
         // See, if incoming translation is available, if so, submit it
-        if (GeneralUtility::_POST('saveInline')) {
+        if ($this->getPostVariable('saveInline')) {
             $this->l10nBaseService->saveTranslation($l10NConfiguration, $translationData);
         }
 
@@ -473,10 +473,10 @@ class LocalizationModuleController extends BaseModule12
         $messagePlaceholder = '###MESSAGE###';
         $flashMessageRenderer = GeneralUtility::makeInstance(FlashMessageRendererResolver::class);
 
-        $importAsDefaultLanguage = (bool)(GeneralUtility::_POST('import_asdefaultlanguage') ?? false);
-        $importExcel = GeneralUtility::_POST('import_excel');
-        $exportExcel = GeneralUtility::_POST('export_excel');
-        $checkExports = GeneralUtility::_POST('check_exports') ?? false;
+        $importAsDefaultLanguage = (bool)($this->getPostVariable('import_asdefaultlanguage') ?? false);
+        $importExcel = $this->getPostVariable('import_excel');
+        $exportExcel = $this->getPostVariable('export_excel');
+        $checkExports = $this->getPostVariable('check_exports') ?? false;
 
         if ($importAsDefaultLanguage) {
             $this->l10nBaseService->setImportAsDefaultLanguage(true);
@@ -514,11 +514,11 @@ class LocalizationModuleController extends BaseModule12
             // Render the XML
             /** @var ExcelXmlView $viewClass */
             $viewClass = GeneralUtility::makeInstance(ExcelXmlView::class, $l10nConfiguration, $this->sysLanguage);
-            $export_xml_forcepreviewlanguage = (int)GeneralUtility::_POST('export_xml_forcepreviewlanguage');
+            $export_xml_forcepreviewlanguage = (int)$this->getPostVariable('export_xml_forcepreviewlanguage');
             if ($export_xml_forcepreviewlanguage > 0) {
                 $viewClass->setForcedSourceLanguage($export_xml_forcepreviewlanguage);
             }
-            if (GeneralUtility::_POST('export_xml_forcepreviewlanguage_only')) {
+            if ($this->getPostVariable('export_xml_forcepreviewlanguage_only')) {
                 $viewClass->setOnlyForcedSourceLanguage();
             }
             if ($this->MOD_SETTINGS['onlyChangedContent'] ?? false) {
@@ -621,13 +621,13 @@ class LocalizationModuleController extends BaseModule12
         $existingExportsOverview = '';
         $flashMessages = [];
 
-        $importXml = GeneralUtility::_POST('import_xml');
-        $exportXml = GeneralUtility::_POST('export_xml');
-        $importAsDefaultLanguage = (bool)(GeneralUtility::_POST('import_asdefaultlanguage') ?? false);
-        $deleteLocalizationsBeforeImport = (bool)(GeneralUtility::_POST('import_delL10N') ?? false);
-        $checkExports = (bool)(GeneralUtility::_POST('check_exports') ?? false);
-        $makePreviewLinks = (bool)(GeneralUtility::_POST('make_preview_link') ?? false);
-        $ftpUpload = (bool)(GeneralUtility::_POST('ftp_upload') ?? false);
+        $importXml = $this->getPostVariable('import_xml');
+        $exportXml = $this->getPostVariable('export_xml');
+        $importAsDefaultLanguage = (bool)($this->getPostVariable('import_asdefaultlanguage') ?? false);
+        $deleteLocalizationsBeforeImport = (bool)($this->getPostVariable('import_delL10N') ?? false);
+        $checkExports = (bool)($this->getPostVariable('check_exports') ?? false);
+        $makePreviewLinks = (bool)($this->getPostVariable('make_preview_link') ?? false);
+        $ftpUpload = (bool)($this->getPostVariable('ftp_upload') ?? false);
 
         // Read uploaded file:
         if ($importXml && !empty($_FILES['uploaded_import_file']['tmp_name']) && is_uploaded_file($_FILES['uploaded_import_file']['tmp_name'])) {
@@ -725,11 +725,11 @@ class LocalizationModuleController extends BaseModule12
             // Render the XML
             /** @var CatXmlView $viewClass */
             $viewClass = GeneralUtility::makeInstance(CatXmlView::class, $l10nConfiguration, $this->sysLanguage);
-            $export_xml_forcepreviewlanguage = (int)GeneralUtility::_POST('export_xml_forcepreviewlanguage');
+            $export_xml_forcepreviewlanguage = (int)$this->getPostVariable('export_xml_forcepreviewlanguage');
             if ($export_xml_forcepreviewlanguage > 0) {
                 $viewClass->setForcedSourceLanguage($export_xml_forcepreviewlanguage);
             }
-            if (GeneralUtility::_POST('export_xml_forcepreviewlanguage_only')) {
+            if ($this->getPostVariable('export_xml_forcepreviewlanguage_only')) {
                 $viewClass->setOnlyForcedSourceLanguage();
             }
             if ($this->MOD_SETTINGS['onlyChangedContent'] ?? false) {
@@ -1023,9 +1023,9 @@ class LocalizationModuleController extends BaseModule12
 
     protected function exportImportXmlAction(L10nConfiguration $l10NConfiguration): array
     {
-        $prefs['utf8'] = GeneralUtility::_POST('check_utf8');
-        $prefs['noxmlcheck'] = GeneralUtility::_POST('no_check_xml');
-        $prefs['check_exports'] = GeneralUtility::_POST('check_exports');
+        $prefs['utf8'] = $this->getPostVariable('check_utf8');
+        $prefs['noxmlcheck'] = $this->getPostVariable('no_check_xml');
+        $prefs['check_exports'] = $this->getPostVariable('check_exports');
         $this->getBackendUser()->pushModuleData('l10nmgr/cm1/prefs', $prefs);
 
         return $this->catXMLExportImportAction($l10NConfiguration);
@@ -1040,5 +1040,15 @@ class LocalizationModuleController extends BaseModule12
         );
 
         return $l10nmgrconfigurationView->render();
+    }
+
+    private function getPostVariable($variableName): mixed
+    {
+        return $this->getRequest()?->getParsedBody()[$variableName];
+    }
+
+    private function getRequest(): ?ServerRequestInterface
+    {
+        return $GLOBALS['TYPO3_REQUEST'] instanceof ServerRequestInterface ? $GLOBALS['TYPO3_REQUEST'] : null;
     }
 }

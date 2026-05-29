@@ -374,7 +374,19 @@ class L10nHtmlListView extends AbstractExportView
             $href = (string)$uriBuilder->buildUriFromRoute('record_edit', $params);
         } else {
             $linkText = '[' . $this->getLanguageService()->sl($this->langFile . 'render_overview.clicklocalize.message') . ']';
+            $url = (string) $this->uriBuilder->buildUriFromRoute(
+                'tce_db',
+                [
+                    'cmd' => [
+                        $table => [
+                            ($data['translationInfo']['uid'] ?? 0) => [
+                                'localize' => $targetLanguage,
+                            ],
+                        ],
+                    ],
+                ]
             );
+            $href = htmlspecialchars($url);
         }
 
         return ' - <a href="' . $href . '"><em>' . $linkText . '</em></a>';

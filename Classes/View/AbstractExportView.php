@@ -28,6 +28,7 @@ use Doctrine\DBAL\ParameterType;
 use Localizationteam\L10nmgr\Model\L10nConfiguration;
 use Localizationteam\L10nmgr\Traits\BackendUserTrait;
 use Localizationteam\L10nmgr\Traits\LanguageServiceTrait;
+use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Database\Connection;
@@ -86,6 +87,8 @@ abstract class AbstractExportView implements ExportViewInterface
 
     protected Typo3Version $typo3Version;
 
+    protected UriBuilder $uriBuilder;
+
     protected string $langFile;
 
     /**
@@ -103,6 +106,7 @@ abstract class AbstractExportView implements ExportViewInterface
         $this->site = $siteFinder->getSiteByPageId($l10ncfgObj->getPid());
         $this->getLanguageService()->includeLLFile('EXT:l10nmgr/Resources/Private/Language/Cli/locallang.xml');
         $this->langFile = 'LLL:EXT:l10nmgr/Resources/Private/Language/Modules/LocalizationManager/locallang.xlf:';
+        $this->uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
     }
 
     public function getExportType(): int

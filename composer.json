@@ -74,10 +74,10 @@
 		"ext-ftp": "*",
 		"ext-xml": "*",
 		"php": ">=8.1",
-		"typo3/cms-backend": "^11.5 || ^12.4",
-		"typo3/cms-core": "^11.5 || ^12.4",
-		"typo3/cms-fluid": "^11.5 || ^12.4",
-		"typo3/cms-scheduler": "^11.5 || ^12.4"
+		"typo3/cms-backend": "^13.4",
+		"typo3/cms-core": "^13.4",
+		"typo3/cms-fluid": "^13.4",
+		"typo3/cms-scheduler": "^13.4"
 	},
 	"require-dev": {
 		"friendsofphp/php-cs-fixer": "^3.1.0",

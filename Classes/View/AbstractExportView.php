@@ -374,11 +374,11 @@ abstract class AbstractExportView implements ExportViewInterface
         }
         return sprintf(
             '%-15s%-15s%-15s%-15s%s%s%s',
-            $this->getLanguageService()->getLL('export.overview.date.label'),
-            $this->getLanguageService()->getLL('export.overview.configuration.label'),
-            $this->getLanguageService()->getLL('export.overview.type.label'),
-            $this->getLanguageService()->getLL('export.overview.targetlanguage.label'),
-            $this->getLanguageService()->getLL('export.overview.filename.label'),
+            $this->getLanguageService()->sl($this->langFile . 'export.overview.date.label'),
+            $this->getLanguageService()->sl($this->langFile . 'export.overview.configuration.label'),
+            $this->getLanguageService()->sl($this->langFile . 'export.overview.type.label'),
+            $this->getLanguageService()->sl($this->langFile . 'export.overview.targetlanguage.label'),
+            $this->getLanguageService()->sl($this->langFile . 'export.overview.filename.label'),
             LF,
             implode(LF, $content)
         );

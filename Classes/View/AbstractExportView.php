@@ -86,6 +86,8 @@ abstract class AbstractExportView implements ExportViewInterface
 
     protected Typo3Version $typo3Version;
 
+    protected string $langFile;
+
     /**
      * @throws SiteNotFoundException
      */
@@ -100,6 +102,7 @@ abstract class AbstractExportView implements ExportViewInterface
         $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
         $this->site = $siteFinder->getSiteByPageId($l10ncfgObj->getPid());
         $this->getLanguageService()->includeLLFile('EXT:l10nmgr/Resources/Private/Language/Cli/locallang.xml');
+        $this->langFile = 'LLL:EXT:l10nmgr/Resources/Private/Language/Modules/LocalizationManager/locallang.xlf:';
     }
 
     public function getExportType(): int
@@ -307,13 +310,11 @@ abstract class AbstractExportView implements ExportViewInterface
 %s
 	</tbody>
 </table>',
-                $this->getLanguageService()->getLL('export.overview.date.label'),
-                $this->getLanguageService()->getLL('export.overview.configuration.label'),
-                $this->getLanguageService()->getLL('export.overview.type.label'),
-                $this->getLanguageService()->getLL('export.overview.targetlanguage.label'),
-                $this->getLanguageService()->getLL(
-                    'export.overview.filename.label'
-                ),
+                $this->getLanguageService()->sl($this->langFile . 'export.overview.date.label'),
+                $this->getLanguageService()->sl($this->langFile . 'export.overview.configuration.label'),
+                $this->getLanguageService()->sl($this->langFile . 'export.overview.type.label'),
+                $this->getLanguageService()->sl($this->langFile . 'export.overview.targetlanguage.label'),
+                $this->getLanguageService()->sl($this->langFile . 'export.overview.filename.label'),
                 implode(chr(10), $content)
             );
         }
@@ -440,8 +441,8 @@ abstract class AbstractExportView implements ExportViewInterface
                 $flashMessage = GeneralUtility::makeInstance(
                     FlashMessage::class,
                     $messageBody,
-                    $this->getLanguageService()->getLL('export.ftp.warnings'),
-                    AbstractMessage::WARNING
+                    $this->getLanguageService()->sL($this->langFile . 'export.ftp.warnings'),
+                    ContextualFeedbackSeverity::WARNING
                 );
             }
         }
@@ -471,8 +472,8 @@ abstract class AbstractExportView implements ExportViewInterface
                 $flashMessage = GeneralUtility::makeInstance(
                     FlashMessage::class,
                     $messageBody,
-                    $this->getLanguageService()->getLL('export.ftp.warnings'),
-                    AbstractMessage::WARNING
+                    $this->getLanguageService()->sL($this->langFile . 'export.ftp.warnings'),
+                    ContextualFeedbackSeverity::WARNING
                 );
                 $ret .= GeneralUtility::makeInstance(FlashMessageRendererResolver::class)
                     ->resolve()

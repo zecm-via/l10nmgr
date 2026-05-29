@@ -106,6 +106,8 @@ class LocalizationModuleController extends BaseModule12
 
     protected ModuleInterface $currentModule;
 
+    protected string $langFile;
+
     public function __construct(
         public readonly IconFactory $iconFactory,
         public readonly ModuleProvider $moduleProvider,
@@ -113,8 +115,7 @@ class LocalizationModuleController extends BaseModule12
         protected readonly ModuleTemplateFactory $moduleTemplateFactory,
         protected readonly L10nBaseService $l10nBaseService,
     ) {
-        $this->getLanguageService()
-            ->includeLLFile('EXT:l10nmgr/Resources/Private/Language/Modules/LocalizationManager/locallang.xlf');
+        $this->langFile = 'LLL:EXT:l10nmgr/Resources/Private/Language/Modules/LocalizationManager/locallang.xlf:';
     }
 
     public function initialize(ServerRequestInterface $request): void
@@ -162,7 +163,7 @@ class LocalizationModuleController extends BaseModule12
             $this->MOD_MENU['action'] ?? [],
             '',
             $addParams,
-            $this->getLanguageService()->getLL('general.export.choose.action.title')
+            $this->getLanguageService()->sL($this->langFile . 'general.export.choose.action.title')
         );
 
         // @extensionScannerIgnoreLine
@@ -173,7 +174,7 @@ class LocalizationModuleController extends BaseModule12
             $this->MOD_MENU['lang'] ?? [],
             '',
             $addParams,
-            $this->getLanguageService()->getLL('export.overview.targetlanguage.label')
+            $this->getLanguageService()->sL($this->langFile . 'export.overview.targetlanguage.label')
         );
 
         $checkBoxes = [];
@@ -185,7 +186,7 @@ class LocalizationModuleController extends BaseModule12
             '',
             $addParams,
             '',
-            $this->getLanguageService()->getLL('export.xml.new.title')
+            $this->getLanguageService()->sL($this->langFile . 'export.xml.new.title')
         );
         // @extensionScannerIgnoreLine
         $checkBoxes[] = self::getFuncCheck(
@@ -195,7 +196,7 @@ class LocalizationModuleController extends BaseModule12
             '',
             $addParams,
             '',
-            $this->getLanguageService()->getLL('export.xml.noHidden.title')
+            $this->getLanguageService()->sL($this->langFile . 'export.xml.noHidden.title')
         );
 
         return [
@@ -427,8 +428,8 @@ class LocalizationModuleController extends BaseModule12
 
         // Buttons:
         $info = [];
-        $info['saveConfirmation'] = 'return confirm(\'' . $this->getLanguageService()->getLL('inlineedit.save.alert.title') . '\');';
-        $info['cancelConfirmation'] = 'return confirm(\'' . $this->getLanguageService()->getLL('inlineedit.cancel.alert.title') . '\');';
+        $info['saveConfirmation'] = 'return confirm(\'' . $this->getLanguageService()->sL($this->langFile . 'inlineedit.save.alert.title') . '\');';
+        $info['cancelConfirmation'] = 'return confirm(\'' . $this->getLanguageService()->sL($this->langFile . 'inlineedit.cancel.alert.title') . '\');';
 
         return $info;
     }
@@ -448,7 +449,7 @@ class LocalizationModuleController extends BaseModule12
             $selectOptions,
             '',
             '',
-            $this->getLanguageService()->getLL('export.xml.source-language.title')
+            $this->getLanguageService()->sL($this->langFile . 'export.xml.source-language.title')
         );
         if ($forcedSourceLanguage) {
             $previewLanguageMenu['forcedSourceLanguage'] = $forcedSourceLanguage;
@@ -498,8 +499,8 @@ class LocalizationModuleController extends BaseModule12
             $status = ContextualFeedbackSeverity::INFO;
             $flashMessageData = [
                 'message' => $messagePlaceholder,
-                'title' => $this->getLanguageService()->getLL('import.success.message'),
-                'severity' => $status,
+                'title' => $this->getLanguageService()->sL($this->langFile . 'import.success.message'),
+                'severity' => $status->value,
             ];
             $flashMessage = FlashMessage::createFromArray($flashMessageData);
             $flashMessageHtml = str_replace(
@@ -532,13 +533,13 @@ class LocalizationModuleController extends BaseModule12
                 $status = ContextualFeedbackSeverity::INFO;
                 $flashMessageData = [
                     'message' => $messagePlaceholder,
-                    'title' => $this->getLanguageService()->getLL('export.process.duplicate.title'),
-                    'severity' => $status,
+                    'title' => $this->getLanguageService()->sL($this->langFile . 'export.process.duplicate.title'),
+                    'severity' => $status->value,
                 ];
                 $flashMessage = FlashMessage::createFromArray($flashMessageData);
                 $flashMessageHtml = str_replace(
                     $messagePlaceholder,
-                    $this->getLanguageService()->getLL('export.process.duplicate.message'),
+                    $this->getLanguageService()->sL($this->langFile . 'export.process.duplicate.message'),
                     $flashMessageRenderer->resolve()->render([$flashMessage])
                 );
 
@@ -546,8 +547,8 @@ class LocalizationModuleController extends BaseModule12
             } else {
                 try {
                     // Prepare a success message for display
-                    $title = $this->getLanguageService()->getLL('export.download.success');
-                    $status = AbstractMessage::OK;
+                    $title = $this->getLanguageService()->sL($this->langFile . 'export.download.success');
+                    $status = ContextualFeedbackSeverity::OK;
 
                     $flashMessageData = [
                         'message' => $messagePlaceholder,
@@ -560,7 +561,7 @@ class LocalizationModuleController extends BaseModule12
                     $link = sprintf('<a href="%s" target="_blank">%s</a>', $filename, $filename);
                     $flashMessageHtml = str_replace(
                         $messagePlaceholder,
-                        sprintf($this->getLanguageService()->getLL('export.download.success.detail'), $link),
+                        sprintf($this->getLanguageService()->sL($this->langFile . 'export.download.success.detail'), $link),
                         $flashMessageRenderer->resolve()->render([$flashMessage])
                     );
                 } catch (Exception $e) {
@@ -568,8 +569,8 @@ class LocalizationModuleController extends BaseModule12
                     $status = ContextualFeedbackSeverity::ERROR;
                     $flashMessageData = [
                         'message' => $messagePlaceholder,
-                        'title' => $this->getLanguageService()->getLL('export.download.error'),
-                        'severity' => $status,
+                        'title' => $this->getLanguageService()->sL($this->langFile . 'export.download.error'),
+                        'severity' => $status->value,
                     ];
                     $flashMessage = FlashMessage::createFromArray($flashMessageData);
                     $flashMessageHtml = str_replace(
@@ -650,8 +651,8 @@ class LocalizationModuleController extends BaseModule12
                 $status = ContextualFeedbackSeverity::ERROR;
                 $flashMessageData = [
                     'message' => $messagePlaceholder,
-                    'title' => $this->getLanguageService()->getLL('import.error.title'),
-                    'severity' => $status,
+                    'title' => $this->getLanguageService()->sL($this->langFile . 'import.error.title'),
+                    'severity' => $status->value,
                 ];
                 $flashMessage = FlashMessage::createFromArray($flashMessageData);
                 $flashMessages[] = str_replace(
@@ -663,15 +664,15 @@ class LocalizationModuleController extends BaseModule12
                 if ($deleteLocalizationsBeforeImport) {
                     $delCount = $importManager->delL10N($importManager->getDelL10NDataFromCATXMLNodes($importManager->getXMLNodes()));
                     $message = sprintf(
-                        $this->getLanguageService()->getLL('import.xml.delL10N.count.message'),
+                        $this->getLanguageService()->sL($this->langFile . 'import.xml.delL10N.count.message'),
                         $delCount
                     );
 
                     $status = ContextualFeedbackSeverity::INFO;
                     $flashMessageData = [
                         'message' => $messagePlaceholder,
-                        'title' => $this->getLanguageService()->getLL('import.xml.delL10N.message'),
-                        'severity' => $status,
+                        'title' => $this->getLanguageService()->sL($this->langFile . 'import.xml.delL10N.message'),
+                        'severity' => $status->value,
                     ];
                     $flashMessage = FlashMessage::createFromArray($flashMessageData);
                     $flashMessages[] = str_replace(
@@ -682,7 +683,7 @@ class LocalizationModuleController extends BaseModule12
                 }
                 if ($makePreviewLinks && ExtensionManagementUtility::isLoaded('workspaces')) {
                     $pageIds = $importManager->getPidsFromCATXMLNodes($importManager->getXMLNodes());
-                    $actionInfo .= '<b>' . $this->getLanguageService()->getLL('import.xml.preview_links.title') . '</b><br />';
+                    $actionInfo .= '<b>' . $this->getLanguageService()->sL($this->langFile . 'import.xml.preview_links.title') . '</b><br />';
                     /** @var MkPreviewLinkService $mkPreviewLinks */
                     $mkPreviewLinks = GeneralUtility::makeInstance(
                         MkPreviewLinkService::class,
@@ -707,8 +708,8 @@ class LocalizationModuleController extends BaseModule12
                 $status = ContextualFeedbackSeverity::OK;
                 $flashMessageData = [
                     'message' => $messagePlaceholder,
-                    'title' => $this->getLanguageService()->getLL('general.import.done'),
-                    'severity' => $status,
+                    'title' => $this->getLanguageService()->sL($this->langFile . 'general.import.done'),
+                    'severity' => $status->value,
                 ];
                 $flashMessage = FlashMessage::createFromArray($flashMessageData);
                 $flashMessages[] = str_replace(
@@ -742,13 +743,13 @@ class LocalizationModuleController extends BaseModule12
                 $status = ContextualFeedbackSeverity::INFO;
                 $flashMessageData = [
                     'message' => $messagePlaceholder,
-                    'title' => $this->getLanguageService()->getLL('export.process.duplicate.title'),
-                    'severity' => $status,
+                    'title' => $this->getLanguageService()->sL($this->langFile . 'export.process.duplicate.title'),
+                    'severity' => $status->value,
                 ];
                 $flashMessage = FlashMessage::createFromArray($flashMessageData);
                 $flashMessages[] = str_replace(
                     $messagePlaceholder,
-                    $this->getLanguageService()->getLL('export.process.duplicate.message'),
+                    $this->getLanguageService()->sL($this->langFile . 'export.process.duplicate.message'),
                     $flashMessageRenderer->resolve()->render([$flashMessage])
                 );
 
@@ -767,14 +768,14 @@ class LocalizationModuleController extends BaseModule12
                         $status = ContextualFeedbackSeverity::OK;
                         $flashMessageData = [
                             'message' => $messagePlaceholder,
-                            'title' => $this->getLanguageService()->getLL('export.ftp.success'),
-                            'severity' => $status,
+                            'title' => $this->getLanguageService()->sL($this->langFile . 'export.ftp.success'),
+                            'severity' => $status->value,
                         ];
                         $flashMessage = FlashMessage::createFromArray($flashMessageData);
                         $flashMessages[] = str_replace(
                             $messagePlaceholder,
                             sprintf(
-                                $this->getLanguageService()->getLL('export.ftp.success.detail'),
+                                $this->getLanguageService()->sL($this->langFile . 'export.ftp.success.detail'),
                                 $this->emConfiguration->getFtpServerPath() . $filename
                             ),
                             $flashMessageRenderer->resolve()->render([$flashMessage])
@@ -784,8 +785,8 @@ class LocalizationModuleController extends BaseModule12
                         $status = ContextualFeedbackSeverity::ERROR;
                         $flashMessageData = [
                             'message' => $messagePlaceholder,
-                            'title' => $this->getLanguageService()->getLL('export.ftp.error'),
-                            'severity' => $status,
+                            'title' => $this->getLanguageService()->sL($this->langFile . 'export.ftp.error'),
+                            'severity' => $status->value,
                         ];
                         $flashMessage = FlashMessage::createFromArray($flashMessageData);
                         $flashMessages[] = str_replace(
@@ -803,13 +804,13 @@ class LocalizationModuleController extends BaseModule12
                         $status = ContextualFeedbackSeverity::OK;
                         $flashMessageData = [
                             'message' => $messagePlaceholder,
-                            'title' => $this->getLanguageService()->getLL('export.download.success'),
-                            'severity' => $status,
+                            'title' => $this->getLanguageService()->sL($this->langFile . 'export.download.success'),
+                            'severity' => $status->value,
                         ];
                         $flashMessage = FlashMessage::createFromArray($flashMessageData);
                         $flashMessages[] = str_replace(
                             $messagePlaceholder,
-                            sprintf($this->getLanguageService()->getLL('export.download.success.detail'), $link),
+                            sprintf($this->getLanguageService()->sL($this->langFile . 'export.download.success.detail'), $link),
                             $flashMessageRenderer->resolve()->render([$flashMessage])
                         );
                     } catch (Exception $e) {
@@ -817,8 +818,8 @@ class LocalizationModuleController extends BaseModule12
                         $status = ContextualFeedbackSeverity::ERROR;
                         $flashMessageData = [
                             'message' => $messagePlaceholder,
-                            'title' => $this->getLanguageService()->getLL('export.download.error'),
-                            'severity' => $status,
+                            'title' => $this->getLanguageService()->sL($this->langFile . 'export.download.error'),
+                            'severity' => $status->value,
                         ];
                         $flashMessage = FlashMessage::createFromArray($flashMessageData);
                         $flashMessages[] = str_replace(
@@ -857,7 +858,7 @@ class LocalizationModuleController extends BaseModule12
             if (is_file($absoluteFileName) && is_readable($absoluteFileName)) {
                 $size = GeneralUtility::formatSize((int)filesize($absoluteFileName), ' Bytes| KB| MB| GB');
                 $href = $uriBuilder->buildUriFromRoute('download_setting', ['setting' => $settingId]);
-                $label = $this->getLanguageService()->getLL('file.settings.' . $settingId . '.title') . ' (' . $size . ')';
+                $label = $this->getLanguageService()->sL($this->langFile . 'file.settings.' . $settingId . '.title') . ' (' . $size . ')';
 
                 $files[$settingId] = [
                     'absoluteFilename' => GeneralUtility::getFileAbsFileName('EXT:l10nmgr/Configuration/Settings/' . $settingFileName),
@@ -921,7 +922,7 @@ class LocalizationModuleController extends BaseModule12
                 } else {
                     ftp_close($connection);
                     throw new Exception(sprintf(
-                        $this->getLanguageService()->getLL('export.ftp.upload_failed'),
+                        $this->getLanguageService()->sL($this->langFile . 'export.ftp.upload_failed'),
                         $filename,
                         $this->emConfiguration->getFtpServerPath()
                     ), 1326906926);
@@ -929,12 +930,12 @@ class LocalizationModuleController extends BaseModule12
             } else {
                 ftp_close($connection);
                 throw new Exception(sprintf(
-                    $this->getLanguageService()->getLL('export.ftp.login_failed'),
+                    $this->getLanguageService()->sL($this->langFile . 'export.ftp.login_failed'),
                     $this->emConfiguration->getFtpServerUsername()
                 ), 1326906772);
             }
         } else {
-            throw new Exception($this->getLanguageService()->getLL('export.ftp.connection_failed'), 1326906675);
+            throw new Exception($this->getLanguageService()->sL($this->langFile . 'export.ftp.connection_failed'), 1326906675);
         }
         // If everything went well, return the file's base name
         return $xmlFileName;
@@ -947,11 +948,11 @@ class LocalizationModuleController extends BaseModule12
     {
         $this->MOD_MENU = [
             'action' => [
-                '' => $this->getLanguageService()->getLL('general.action.blank.title'),
-                'link' => $this->getLanguageService()->getLL('general.action.edit.link.title'),
-                'inlineEdit' => $this->getLanguageService()->getLL('general.action.edit.inline.title'),
-                'export_excel' => $this->getLanguageService()->getLL('general.action.export.excel.title'),
-                'export_xml' => $this->getLanguageService()->getLL('general.action.export.xml.title'),
+                '' => $this->getLanguageService()->sL($this->langFile . 'general.action.blank.title'),
+                'link' => $this->getLanguageService()->sL($this->langFile . 'general.action.edit.link.title'),
+                'inlineEdit' => $this->getLanguageService()->sL($this->langFile . 'general.action.edit.inline.title'),
+                'export_excel' => $this->getLanguageService()->sL($this->langFile . 'general.action.export.excel.title'),
+                'export_xml' => $this->getLanguageService()->sL($this->langFile . 'general.action.export.xml.title'),
             ],
             'lang' => [],
             'onlyChangedContent' => '',

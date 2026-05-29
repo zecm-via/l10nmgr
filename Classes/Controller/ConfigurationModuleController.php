@@ -72,14 +72,15 @@ class ConfigurationModuleController
 
     public int $id;
 
+    protected string $langFile;
+
     public function __construct(
         public readonly IconFactory $iconFactory,
         public readonly ModuleProvider $moduleProvider,
         public readonly UriBuilder $uriBuilder,
         protected readonly ModuleTemplateFactory $moduleTemplateFactory,
     ) {
-        $this->getLanguageService()
-            ->includeLLFile('EXT:l10nmgr/Resources/Private/Language/Modules/ConfigurationManager/locallang.xlf');
+        $this->langFile = 'LLL:EXT:l10nmgr/Resources/Private/Language/Modules/ConfigurationManager/locallang.xlf:';
     }
 
     /**
@@ -199,31 +200,31 @@ class ConfigurationModuleController
         $languageArray = $this->getPageDetails($configuration['sourceLangStaticId'] ?? 0);
         $details = '<table class="table table-striped table-hover" border="0" cellspacing="0" cellpadding="0">';
         $details .= '<tr>';
-        $details .= '<td>' . $this->getLanguageService()->getLL('general.list.infodetail.pid.title') . '</td>';
+        $details .= '<td>' . $this->getLanguageService()->sL($this->langFile . 'general.list.infodetail.pid.title') . '</td>';
         $details .= '<td>' . $parentPageArray['title'] ?? '' . ' (' . $parentPageArray['uid'] ?? 0 . ')</td>';
         $details .= '</tr><tr class="db_list_normal">';
-        $details .= '<td>' . $this->getLanguageService()->getLL('general.list.infodetail.title.title') . '</td>';
+        $details .= '<td>' . $this->getLanguageService()->sL($this->langFile . 'general.list.infodetail.title.title') . '</td>';
         $details .= '<td>' . $configuration['title'] ?? '' . '</td>';
         $details .= '</tr><tr class="db_list_normal">';
-        $details .= '<td>' . $this->getLanguageService()->getLL('general.list.infodetail.filenameprefix.title') . '</td>';
+        $details .= '<td>' . $this->getLanguageService()->sL($this->langFile . 'general.list.infodetail.filenameprefix.title') . '</td>';
         $details .= '<td>' . $configuration['filenameprefix'] ?? '' . '</td>';
         $details .= '</tr><tr class="db_list_normal">';
-        $details .= '<td>' . $this->getLanguageService()->getLL('general.list.infodetail.depth.title') . '</td>';
+        $details .= '<td>' . $this->getLanguageService()->sL($this->langFile . 'general.list.infodetail.depth.title') . '</td>';
         $details .= '<td>' . $configuration['depth'] ?? '' . '</td>';
         $details .= '</tr><tr class="db_list_normal">';
-        $details .= '<td>' . $this->getLanguageService()->getLL('general.list.infodetail.sourceLangStaticId.title') . '</td>';
-        $details .= '<td>' . ((empty($languageArray['lg_name_en'])) ? $this->getLanguageService()->getLL('general.list.infodetail.default') : $languageArray['lg_name_en']) . '</td>';
+        $details .= '<td>' . $this->getLanguageService()->sL($this->langFile . 'general.list.infodetail.sourceLangStaticId.title') . '</td>';
+        $details .= '<td>' . ((empty($languageArray['lg_name_en'])) ? $this->getLanguageService()->sL($this->langFile . 'general.list.infodetail.default') : $languageArray['lg_name_en']) . '</td>';
         $details .= '</tr><tr class="db_list_normal">';
-        $details .= '<td>' . $this->getLanguageService()->getLL('general.list.infodetail.tablelist.title') . '</td>';
+        $details .= '<td>' . $this->getLanguageService()->sL($this->langFile . 'general.list.infodetail.tablelist.title') . '</td>';
         $details .= '<td>' . $configuration['tablelist'] ?? '' . '</td>';
         $details .= '</tr><tr class="db_list_normal">';
-        $details .= '<td>' . $this->getLanguageService()->getLL('general.list.infodetail.exclude.title') . '</td>';
+        $details .= '<td>' . $this->getLanguageService()->sL($this->langFile . 'general.list.infodetail.exclude.title') . '</td>';
         $details .= '<td>' . $configuration['exclude'] ?? '' . '</td>';
         $details .= '</tr><tr class="db_list_normal">';
-        $details .= '<td>' . $this->getLanguageService()->getLL('general.list.infodetail.include.title') . '</td>';
+        $details .= '<td>' . $this->getLanguageService()->sL($this->langFile . 'general.list.infodetail.include.title') . '</td>';
         $details .= '<td>' . $configuration['include'] ?? '' . '</td>';
         $details .= '</tr><tr class="db_list_normal">';
-        $details .= '<td>' . $this->getLanguageService()->getLL('general.list.infodetail.displaymode.title') . '</td>';
+        $details .= '<td>' . $this->getLanguageService()->sL($this->langFile . 'general.list.infodetail.displaymode.title') . '</td>';
         $details .= '<td>' . $configuration['displaymode'] ?? '' . '</td>';
         $details .= '</tr>';
         $details .= '</table>';

@@ -130,13 +130,13 @@ class L10nHtmlListView extends AbstractExportView
                                 $flags['noChange'] = 0;
                                 $flags['update'] = 0;
                                 if ($uidValue === 'NEW') {
-                                    $diff = '<em>' . $this->getLanguageService()->getLL('render_overview.new.message') . '</em>';
+                                    $diff = '<em>' . $this->getLanguageService()->sl($this->langFile . 'render_overview.new.message') . '</em>';
                                     $flags['new']++;
                                 } elseif (!isset($tData['diffDefaultValue'])) {
-                                    $diff = '<em>' . $this->getLanguageService()->getLL('render_overview.nodiff.message') . '</em>';
+                                    $diff = '<em>' . $this->getLanguageService()->sl($this->langFile . 'render_overview.nodiff.message') . '</em>';
                                     $flags['unknown']++;
                                 } elseif ($noChangeFlag) {
-                                    $diff = $this->getLanguageService()->getLL('render_overview.nochange.message');
+                                    $diff = $this->getLanguageService()->sl($this->langFile . 'render_overview.nochange.message');
                                     $flags['noChange']++;
                                 } else {
                                     $diff = $this->diffCMP($tData['diffDefaultValue'] ?? '', $tData['defaultValue'] ?? '');
@@ -360,7 +360,7 @@ class L10nHtmlListView extends AbstractExportView
                 ? $data['translationInfo']['translations'][$targetLanguage]['uid']
                 : ($data['translationInfo']['uid'] ?? 0);
 
-            $linkText = '[' . $this->getLanguageService()->getLL('render_overview.clickedit.message') . ']';
+            $linkText = '[' . $this->getLanguageService()->sl($this->langFile . 'render_overview.clickedit.message') . ']';
             $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
             $translationTable = $data['translationInfo']['translation_table'] ?? '';
             $params = [
@@ -376,6 +376,7 @@ class L10nHtmlListView extends AbstractExportView
             $linkText = '[' . $this->getLanguageService()->getLL('render_overview.clicklocalize.message') . ']';
             $href = htmlspecialchars(
                 BackendUtility::getLinkToDataHandlerAction('&cmd[' . $table . '][' . ($data['translationInfo']['uid'] ?? 0) . '][localize]=' . $targetLanguage)
+            $linkText = '[' . $this->getLanguageService()->sl($this->langFile . 'render_overview.clicklocalize.message') . ']';
             );
         }
 

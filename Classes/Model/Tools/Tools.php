@@ -1627,7 +1627,7 @@ class Tools
                         $queryBuilder->createNamedParameter($hashesToDelete, Connection::PARAM_STR_ARRAY)
                     )
                 )
-                ->execute();
+                ->executeQuery();
         }
 
         // Perform bulk insert operation for all records at once

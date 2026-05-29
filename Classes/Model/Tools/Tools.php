@@ -117,7 +117,7 @@ class Tools
      * @throws DBALException
      */
     public function __construct(
-        protected readonly TranslationConfigurationProvider $t8Tools,
+        public readonly TranslationConfigurationProvider $t8Tools,
         protected readonly ConnectionPool $connectionPool,
         protected readonly SiteInterface $site = new NullSite(),
     ) {

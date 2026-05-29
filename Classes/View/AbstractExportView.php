@@ -104,7 +104,6 @@ abstract class AbstractExportView implements ExportViewInterface
         /** @var SiteFinder $siteFinder */
         $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
         $this->site = $siteFinder->getSiteByPageId($l10ncfgObj->getPid());
-        $this->getLanguageService()->includeLLFile('EXT:l10nmgr/Resources/Private/Language/Cli/locallang.xml');
         $this->langFile = 'LLL:EXT:l10nmgr/Resources/Private/Language/Modules/LocalizationManager/locallang.xlf:';
         $this->uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
     }
@@ -210,19 +209,11 @@ abstract class AbstractExportView implements ExportViewInterface
         $sourceLanguageId = $this->l10ncfgObj->getForcedSourceLanguage() ?: 0;
         $sourceLanguageConfiguration = $this->site->getAvailableLanguages($this->getBackendUser())[$sourceLanguageId] ?? null;
         if ($sourceLanguageConfiguration instanceof SiteLanguage) {
-            if ($this->typo3Version->getMajorVersion() < 12) {
-                $sourceLang = $sourceLanguageConfiguration->getLocale() ?: $sourceLanguageConfiguration->getTwoLetterIsoCode();
-            } else {
-                $sourceLang = $sourceLanguageConfiguration->getLocale()->getName() ?: $sourceLanguageConfiguration->getLocale()->getLanguageCode();
-            }
+            $sourceLang = $sourceLanguageConfiguration->getLocale()->getName() ?: $sourceLanguageConfiguration->getLocale()->getLanguageCode();
         }
         $targetLanguageConfiguration = $this->site->getAvailableLanguages($this->getBackendUser())[$this->targetLanguage] ?? null;
         if ($targetLanguageConfiguration instanceof SiteLanguage) {
-            if ($this->typo3Version->getMajorVersion() < 12) {
-                $targetLang = $targetLanguageConfiguration->getLocale() ?: $targetLanguageConfiguration->getTwoLetterIsoCode();
-            } else {
-                $targetLang = $targetLanguageConfiguration->getLocale()->getName() ?: $targetLanguageConfiguration->getLocale()->getLanguageCode();
-            }
+            $targetLang = $targetLanguageConfiguration->getLocale()->getName() ?: $targetLanguageConfiguration->getLocale()->getLanguageCode();
         }
         if ($sourceLang !== '' && $targetLang !== '') {
             $fileNamePrefix = (trim($this->l10ncfgObj->getFileNamePrefix())) ? $this->l10ncfgObj->getFileNamePrefix() . '_' . $fileType : $fileType;
@@ -515,9 +506,9 @@ abstract class AbstractExportView implements ExportViewInterface
     /**
      * @inheritdoc
      */
-    public function setForcedSourceLanguage(int $id): void
+    public function setForcedSourceLanguage(int $forceLanguage): void
     {
-        $this->forcedSourceLanguage = $id;
+        $this->forcedSourceLanguage = $forceLanguage;
     }
 
     public function setOnlyForcedSourceLanguage(): void

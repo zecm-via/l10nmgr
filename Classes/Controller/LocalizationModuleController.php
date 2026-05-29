@@ -53,11 +53,10 @@ use TYPO3\CMS\Core\Http\Response;
 use TYPO3\CMS\Core\Http\Stream;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Information\Typo3Version;
-use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageRendererResolver;
 use TYPO3\CMS\Core\Type\Bitmask\Permission;
-use TYPO3\CMS\Core\Utility\DebugUtility;
+use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\HttpUtility;
@@ -496,7 +495,7 @@ class LocalizationModuleController extends BaseModule12
             $this->l10nBaseService->saveTranslation($l10nConfiguration, $translationData);
             $importSuccess = true;
 
-            $status = AbstractMessage::INFO;
+            $status = ContextualFeedbackSeverity::INFO;
             $flashMessageData = [
                 'message' => $messagePlaceholder,
                 'title' => $this->getLanguageService()->getLL('import.success.message'),
@@ -530,7 +529,7 @@ class LocalizationModuleController extends BaseModule12
 
             // Check the export
             if ($checkExports && $viewClass->checkExports()) {
-                $status = AbstractMessage::INFO;
+                $status = ContextualFeedbackSeverity::INFO;
                 $flashMessageData = [
                     'message' => $messagePlaceholder,
                     'title' => $this->getLanguageService()->getLL('export.process.duplicate.title'),
@@ -566,7 +565,7 @@ class LocalizationModuleController extends BaseModule12
                     );
                 } catch (Exception $e) {
                     // Prepare an error message for display
-                    $status = AbstractMessage::ERROR;
+                    $status = ContextualFeedbackSeverity::ERROR;
                     $flashMessageData = [
                         'message' => $messagePlaceholder,
                         'title' => $this->getLanguageService()->getLL('export.download.error'),
@@ -648,7 +647,7 @@ class LocalizationModuleController extends BaseModule12
                 $xmlString = ''
             );
             if ($importManager->parseAndCheckXMLFile() === false) {
-                $status = AbstractMessage::ERROR;
+                $status = ContextualFeedbackSeverity::ERROR;
                 $flashMessageData = [
                     'message' => $messagePlaceholder,
                     'title' => $this->getLanguageService()->getLL('import.error.title'),
@@ -668,7 +667,7 @@ class LocalizationModuleController extends BaseModule12
                         $delCount
                     );
 
-                    $status = AbstractMessage::INFO;
+                    $status = ContextualFeedbackSeverity::INFO;
                     $flashMessageData = [
                         'message' => $messagePlaceholder,
                         'title' => $this->getLanguageService()->getLL('import.xml.delL10N.message'),
@@ -705,7 +704,7 @@ class LocalizationModuleController extends BaseModule12
 
                 $this->l10nBaseService->saveTranslation($l10nConfiguration, $translationData);
 
-                $status = AbstractMessage::OK;
+                $status = ContextualFeedbackSeverity::OK;
                 $flashMessageData = [
                     'message' => $messagePlaceholder,
                     'title' => $this->getLanguageService()->getLL('general.import.done'),
@@ -740,7 +739,7 @@ class LocalizationModuleController extends BaseModule12
             }
             // Check the export
             if ($checkExports && $viewClass->checkExports()) {
-                $status = AbstractMessage::INFO;
+                $status = ContextualFeedbackSeverity::INFO;
                 $flashMessageData = [
                     'message' => $messagePlaceholder,
                     'title' => $this->getLanguageService()->getLL('export.process.duplicate.title'),
@@ -765,7 +764,7 @@ class LocalizationModuleController extends BaseModule12
                         $notificationService->sendMail($filename, $l10nConfiguration, $this->sysLanguage, $this->emConfiguration);
 
                         // Prepare a success message for display
-                        $status = AbstractMessage::OK;
+                        $status = ContextualFeedbackSeverity::OK;
                         $flashMessageData = [
                             'message' => $messagePlaceholder,
                             'title' => $this->getLanguageService()->getLL('export.ftp.success'),
@@ -782,7 +781,7 @@ class LocalizationModuleController extends BaseModule12
                         );
                     } catch (Exception $e) {
                         // Prepare an error message for display
-                        $status = AbstractMessage::ERROR;
+                        $status = ContextualFeedbackSeverity::ERROR;
                         $flashMessageData = [
                             'message' => $messagePlaceholder,
                             'title' => $this->getLanguageService()->getLL('export.ftp.error'),
@@ -801,7 +800,7 @@ class LocalizationModuleController extends BaseModule12
                         $filename = $this->downloadXML($viewClass);
                         // Prepare a success message for display
                         $link = sprintf('<a href="%s" target="_blank">%s</a>', $filename, $filename);
-                        $status = AbstractMessage::OK;
+                        $status = ContextualFeedbackSeverity::OK;
                         $flashMessageData = [
                             'message' => $messagePlaceholder,
                             'title' => $this->getLanguageService()->getLL('export.download.success'),
@@ -815,7 +814,7 @@ class LocalizationModuleController extends BaseModule12
                         );
                     } catch (Exception $e) {
                         // Prepare an error message for display
-                        $status = AbstractMessage::ERROR;
+                        $status = ContextualFeedbackSeverity::ERROR;
                         $flashMessageData = [
                             'message' => $messagePlaceholder,
                             'title' => $this->getLanguageService()->getLL('export.download.error'),

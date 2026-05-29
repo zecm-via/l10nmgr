@@ -36,12 +36,12 @@ use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Exception;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Information\Typo3Version;
-use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageRendererResolver;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 use TYPO3\CMS\Core\Site\SiteFinder;
+use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 use TYPO3\CMS\Core\Utility\DiffUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
@@ -429,7 +429,7 @@ abstract class AbstractExportView implements ExportViewInterface
     public function renderInternalMessagesAsFlashMessageNew(string $status): ?FlashMessage
     {
         $flashMessage = null;
-        if ($status == AbstractMessage::OK) {
+        if ($status == ContextualFeedbackSeverity::OK) {
             $internalMessages = $this->getMessages();
             if (count($internalMessages) > 0) {
                 $messageBody = '';
@@ -460,7 +460,7 @@ abstract class AbstractExportView implements ExportViewInterface
     public function renderInternalMessagesAsFlashMessage(string $status): string
     {
         $ret = '';
-        if ($status == AbstractMessage::OK) {
+        if ($status == ContextualFeedbackSeverity::OK) {
             $internalMessages = $this->getMessages();
             if (count($internalMessages) > 0) {
                 $messageBody = '';

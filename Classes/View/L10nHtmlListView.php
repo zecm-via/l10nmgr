@@ -27,7 +27,6 @@ use Localizationteam\L10nmgr\Model\L10nConfiguration;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\ModuleTemplate;
-use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Configuration\Richtext;
 use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
@@ -91,7 +90,7 @@ class L10nHtmlListView extends AbstractExportView
         $accum = $accumObj->getInfoArray();
         $l10ncfg = $this->l10ncfg;
         $sections = [];
-        $showSingle = GeneralUtility::_GET('showSingle');
+        $showSingle = (int) ($GLOBALS['TYPO3_REQUEST']->getQueryParams()['showSingle'] ?? null);
         $noAnalysis = false;
         if ($l10ncfg !== null && !empty($l10ncfg['displaymode']) && $l10ncfg['displaymode'] > self::DISPLAY_MODE_RENDER_ALL_ITEMS) {
             $showSingle = $showSingle ?: 'NONE';

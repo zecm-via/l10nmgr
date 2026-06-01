@@ -112,6 +112,27 @@ class Tools
     protected array $_callBackParams_currentRow = [];
 
     /**
+     * Contains data structure when traversing flexform
+     *
+     * @var array
+     */
+    public array $traverseFlexFormXMLData_DS = [];
+
+    /**
+     * Contains data array when traversing flexform
+     *
+     * @var array
+     */
+    public array $traverseFlexFormXMLData_Data = [];
+
+    /**
+     * If set, section indexes are re-numbered before processing
+     *
+     * @var bool
+     */
+    public bool $reNumberIndexesOfSectionData = false;
+
+    /**
      * Setting up internal variable ->t8Tools
      *
      * @throws DBALException
@@ -192,13 +213,13 @@ class Tools
             // So, find translated value:
             $baseStructPath = substr($structurePath, 0, -3);
             $structurePath = $baseStructPath . ($this->detailsOutput['ISOcode'] ?? '');
-            $translValue = (string)$this->getArrayValueByPath($pObj->traverseFlexFormXMLData_Data, $structurePath);
+            $translValue = (string)$this->getArrayValueByPath($this->traverseFlexFormXMLData_Data, $structurePath);
             // Generate preview values:
             $previewLanguageValues = [];
             foreach ($this->previewLanguages as $prevSysUid) {
                 $sysLanguages = $this->sysLanguages[$prevSysUid] ?? [];
                 $previewLanguageValues[$prevSysUid] = $this->getArrayValueByPath(
-                    $pObj->traverseFlexFormXMLData_Data,
+                    $this->traverseFlexFormXMLData_Data,
                     $baseStructPath . ($sysLanguages['ISOcode'] ?? '')
                 );
             }
@@ -220,7 +241,7 @@ class Tools
             // Look for diff-value inside the XML (new way):
             if (!empty($GLOBALS['TYPO3_CONF_VARS']['BE']['flexFormXMLincludeDiffBase'])) {
                 $diffDefaultValue = (string)$this->getArrayValueByPath(
-                    $pObj->traverseFlexFormXMLData_Data,
+                    $this->traverseFlexFormXMLData_Data,
                     $structurePath . '.vDEFbase'
                 );
             } else {

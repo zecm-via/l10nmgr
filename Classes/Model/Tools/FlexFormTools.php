@@ -74,6 +74,8 @@ readonly class FlexFormTools extends \TYPO3\CMS\Core\Configuration\FlexForm\Flex
                 $PA['table'] = $table;
                 $PA['field'] = $field;
                 $PA['uid'] = $row['uid'];
+                $callBackObj->traverseFlexFormXMLData_DS = &$sheetData;
+                $callBackObj->traverseFlexFormXMLData_Data = &$editData;
                 // Render flexform:
                 $this->traverseFlexFormXMLData_recurse(
                     $sheetData['ROOT']['el'],
@@ -105,12 +107,14 @@ readonly class FlexFormTools extends \TYPO3\CMS\Core\Configuration\FlexForm\Flex
                     // Array (Section) traversal
                     if ($value['section'] ?? false) {
                         if (isset($editData[$key]['el']) && is_array($editData[$key]['el'])) {
-                            $temp = [];
-                            $c3 = 0;
-                            foreach ($editData[$key]['el'] as $v3) {
-                                $temp[++$c3] = $v3;
+                            if ($callBackObj->reNumberIndexesOfSectionData) {
+                                $temp = [];
+                                $c3 = 0;
+                                foreach ($editData[$key]['el'] as $v3) {
+                                    $temp[++$c3] = $v3;
+                                }
+                                $editData[$key]['el'] = $temp;
                             }
-                            $editData[$key]['el'] = $temp;
                             foreach ($editData[$key]['el'] as $k3 => $v3) {
                                 if (is_array($v3)) {
                                     $cc = $k3;

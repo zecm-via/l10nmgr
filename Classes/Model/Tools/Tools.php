@@ -29,6 +29,7 @@ namespace Localizationteam\L10nmgr\Model\Tools;
  */
 
 use Doctrine\DBAL\Exception as DBALException;
+use Exception;
 use Localizationteam\L10nmgr\Constants;
 use Localizationteam\L10nmgr\Traits\BackendUserTrait;
 use TYPO3\CMS\Backend\Configuration\TranslationConfigurationProvider;
@@ -36,10 +37,6 @@ use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException;
 use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidIdentifierException;
-use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidParentRowException;
-use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidParentRowLoopException;
-use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidParentRowRootException;
-use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidPointerFieldValueException;
 use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidTcaException;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -1318,11 +1315,7 @@ class Tools
                 $field,
                 $row
             );
-        } catch (InvalidParentRowException $e) {
-        } catch (InvalidParentRowLoopException $e) {
-        } catch (InvalidParentRowRootException $e) {
-        } catch (InvalidPointerFieldValueException $e) {
-        } catch (InvalidTcaException $e) {
+        } catch (Exception) {
         }
         if (!empty($dataStructIdentifier)) {
             $dataStructArray = GeneralUtility::makeInstance(FlexFormTools::class)->parseDataStructureByIdentifier(
@@ -1359,11 +1352,7 @@ class Tools
                         $field,
                         $row
                     );
-                } catch (InvalidParentRowException $e) {
-                } catch (InvalidParentRowLoopException $e) {
-                } catch (InvalidParentRowRootException $e) {
-                } catch (InvalidPointerFieldValueException $e) {
-                } catch (InvalidTcaException $e) {
+                } catch (Exception) {
                 }
                 if (!empty($dataStructIdentifier)) {
                     $dataStructArray = GeneralUtility::makeInstance(

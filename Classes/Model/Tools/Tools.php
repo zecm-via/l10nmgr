@@ -864,7 +864,7 @@ class Tools
                     $result = $dataHandler->checkRecordUpdateAccess(
                         $tableName,
                         $record['uid'] ?? 0
-                    ) && $GLOBALS['BE_USER']->recordEditAccessInternals($tableName, $record['uid'] ?? 0);
+                    ) && $GLOBALS['BE_USER']->recordEditAccessInternals($tableName, $record);
                 }
             }
             $cache->set($key, $result);

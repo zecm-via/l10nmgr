@@ -570,7 +570,7 @@ class LocalizationModuleController extends BaseModule
 
                     $filename = $this->downloadXML($viewClass);
                     $downloadUri = GeneralUtility::makeInstance(UriBuilder::class)->buildUriFromRoute('download_export', ['file' => $filename]);
-                    $link = sprintf('<a href="%s" target="_blank">%s</a>', htmlspecialchars((string)$downloadUri), htmlspecialchars($filename));
+                    $link = sprintf('<a href="%s" target="_blank" download>%s</a>', htmlspecialchars((string)$downloadUri), htmlspecialchars($filename));
                     $flashMessageHtml = str_replace(
                         $messagePlaceholder,
                         sprintf($this->getLanguageService()->sL($this->lll . 'export.download.success.detail'), $link),
@@ -818,7 +818,7 @@ class LocalizationModuleController extends BaseModule
                         $filename = $this->downloadXML($viewClass);
                         // Prepare a success message for display
                         $downloadUri = GeneralUtility::makeInstance(UriBuilder::class)->buildUriFromRoute('download_export', ['file' => $filename]);
-                        $link = sprintf('<a href="%s" target="_blank">%s</a>', htmlspecialchars((string)$downloadUri), htmlspecialchars($filename));
+                        $link = sprintf('<a href="%s" target="_blank" download>%s</a>', htmlspecialchars((string)$downloadUri), htmlspecialchars($filename));
                         $status = ContextualFeedbackSeverity::OK->value;
                         $flashMessageData = [
                             'message' => $messagePlaceholder,
@@ -963,7 +963,7 @@ class LocalizationModuleController extends BaseModule
         return (new Response())
             ->withAddedHeader('Content-Type', 'application/xml; charset=utf-8')
             ->withAddedHeader('Content-Length', (string)(filesize($absoluteFileName) ?: ''))
-            ->withAddedHeader('Content-Disposition', 'inline; filename="' . PathUtility::basename($absoluteFileName) . '"')
+            ->withAddedHeader('Content-Disposition', 'attachment; filename="' . PathUtility::basename($absoluteFileName) . '"')
             ->withBody($body);
     }
 
